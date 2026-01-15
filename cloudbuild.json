@@ -1,0 +1,20 @@
+{
+  "steps": [
+    {
+      "name": "gcr.io/cloud-builders/docker",
+      "args": [
+        "build",
+        "-t",
+        "us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar",
+        "."
+      ]
+    },
+    {
+      "name": "gcr.io/cloud-builders/docker",
+      "args": [
+        "push",
+        "us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar"
+      ]
+    }
+  ]
+}

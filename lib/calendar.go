@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
 	"bufio"
@@ -55,10 +55,10 @@ func clearCalendar(calendarService *calendar.Service, calendarId string) error {
 	return nil
 }
 
-// createSharedCalendar creates or retrieves a shared calendar with the given name using the provided calendar service.
+// CreateSharedCalendar creates or retrieves a shared calendar with the given name using the provided calendar service.
 // If a matching calendar exists, it returns its ID. Otherwise, it creates a new calendar and returns its ID.
 // Returns an error if the calendar cannot be retrieved or created.
-func createSharedCalendar(calendarService *calendar.Service, calendarName string) (string, error) {
+func CreateSharedCalendar(calendarService *calendar.Service, calendarName string) (string, error) {
 
 	allCalendars, err := getAllCalendars(calendarService)
 	if err != nil {
@@ -196,7 +196,7 @@ func main() {
 		log.Fatalf("Unable to retrieve Calendar client: %v", err)
 	}
 
-	sharedCalendarId, err := createSharedCalendar(calendarService, "RVA Hale Sports")
+	sharedCalendarId, err := CreateSharedCalendar(calendarService, "RVA Hale Sports")
 	if err != nil {
 		log.Fatalf("Error creating shared calendar: %v", err)
 	}
