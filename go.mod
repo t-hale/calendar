@@ -7,6 +7,7 @@ toolchain go1.24.5
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.2
 	github.com/apognu/gocal v0.9.1
+	github.com/urfave/cli/v3 v3.6.1
 	google.golang.org/api v0.259.0
 )
 

@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 
 # Build the binary. Adjust the path "./cloud-run/create-calendar" if your main.go is elsewhere.
-RUN go build -o main ./cloud-run/create-calendar
+RUN go build -o main ./cloud-run
 
 # Run the binary
 CMD ["/app/main"]

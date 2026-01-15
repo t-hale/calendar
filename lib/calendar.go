@@ -94,9 +94,17 @@ func CreateSharedCalendar(calendarService *calendar.Service, calendarName string
 	return sharedCalendar, nil
 }
 
-// getAllCalendars retrieves all calendars available in the user's Google Calendar account using the provided service.
+func DeleteCalendar(calendarService *calendar.Service, calendarId string) error {
+	log.Printf("Deleting calendar %s\n", calendarId)
+	if err := calendarService.Calendars.Delete(calendarId).Do(); err != nil {
+		return fmt.Errorf("error deleting calendar: %v", err)
+	}
+	return nil
+}
+
+// GetCalendars retrieves all calendars available in the user's Google Calendar account using the provided service.
 // Returns a list of calendar entries or an error if the operation fails.
-func getAllCalendars(calendarService *calendar.Service) ([]*calendar.CalendarListEntry, error) {
+func GetCalendars(calendarService *calendar.Service) ([]*calendar.CalendarListEntry, error) {
 	calendars, err := calendarService.CalendarList.List().Do()
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve calendar list: %v", err)
@@ -201,15 +209,9 @@ func main() {
 		log.Fatalf("Error creating shared calendar: %v", err)
 	}
 
-	err = clearCalendar(calendarService, sharedCalendarId)
+	err = SyncSharedCalendar(calendarService, sharedCalendarId)
 	if err != nil {
-		log.Fatalf("Error clearing shared calendar: %v", err)
-	}
-
-	log.Printf("Shared calendar ID: %s\n", sharedCalendarId)
-	err = importEventsToSharedCalendar(calendarService, sharedCalendarId)
-	if err != nil {
-		log.Fatalf("Error importing calendar events: %v", err)
+		log.Fatalf("Error syncing shared calendar: %v", err)
 	}
 }
 
@@ -249,4 +251,17 @@ func getICSCalendarEvents(url string, start, end time.Time) ([]*calendar.Event, 
 	}
 
 	return events, nil
+}
+
+func SyncSharedCalendar(calendarService *calendar.Service, calendarId string) error {
+	err := clearCalendar(calendarService, calendarId)
+	if err != nil {
+		log.Fatalf("Error clearing shared calendar: %v", err)
+	}
+
+	log.Printf("Shared calendar ID: %s\n", calendarId)
+	err = importEventsToSharedCalendar(calendarService, calendarId)
+	if err != nil {
+		log.Fatalf("Error importing calendar events: %v", err)
+	}
 }
