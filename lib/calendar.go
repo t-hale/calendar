@@ -267,4 +267,3 @@ func SyncSharedCalendar(calendarService *calendar.Service, calendarId string) er
 
 	return nil
 }
-g
