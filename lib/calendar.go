@@ -22,7 +22,7 @@ var (
 )
 
 func cleanupTempCalendars(calendarService *calendar.Service) error {
-	allCalendars, err := getAllCalendars(calendarService)
+	allCalendars, err := GetCalendars(calendarService)
 	if err != nil {
 		return fmt.Errorf("unable to retrieve calendar list: %v", err)
 	}
@@ -60,7 +60,7 @@ func clearCalendar(calendarService *calendar.Service, calendarId string) error {
 // Returns an error if the calendar cannot be retrieved or created.
 func CreateSharedCalendar(calendarService *calendar.Service, calendarName string) (string, error) {
 
-	allCalendars, err := getAllCalendars(calendarService)
+	allCalendars, err := GetCalendars(calendarService)
 	if err != nil {
 		return "", fmt.Errorf("unable to retrieve calendar list: %v", err)
 	}
@@ -256,12 +256,15 @@ func getICSCalendarEvents(url string, start, end time.Time) ([]*calendar.Event, 
 func SyncSharedCalendar(calendarService *calendar.Service, calendarId string) error {
 	err := clearCalendar(calendarService, calendarId)
 	if err != nil {
-		log.Fatalf("Error clearing shared calendar: %v", err)
+		return fmt.Errorf("error clearing shared calendar: %v", err)
 	}
 
 	log.Printf("Shared calendar ID: %s\n", calendarId)
 	err = importEventsToSharedCalendar(calendarService, calendarId)
 	if err != nil {
-		log.Fatalf("Error importing calendar events: %v", err)
+		return fmt.Errorf("error importing calendar events: %v", err)
 	}
+
+	return nil
 }
+g
