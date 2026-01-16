@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 # Build the command inside the container.
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o main ./cloud-run/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o main ./cloud-run/main.go
 
 # Use a Docker multi-stage build to create a lean production image.
 FROM alpine:3
