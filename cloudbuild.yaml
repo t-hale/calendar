@@ -5,14 +5,14 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar'
+      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/calendar'
       - .
   # Step 2: Push the Docker image to Artifact Registry
   - id: 'Push docker image'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar'
+      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/calendar'
 
   # Step 3: Run Terraform to deploy the infrastructure
   - id: 'Deploy terraform'
