@@ -1,16 +1,25 @@
-FROM golang:1.24
+FROM golang:1.24 as builder
 
+# Copy local code to the container image.
 WORKDIR /app
-
-# Copy go.mod and download dependencies
-COPY go.mod ./
-RUN go mod download
-
-# Copy the source code
 COPY . .
 
-# Build the binary. Adjust the path "./cloud-run/create-calendar" if your main.go is elsewhere.
-RUN go build -o main ./cloud-run
+# Build the command inside the container.
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o main ./cloud-run/main.go
 
-# Run the binary
+# Use a Docker multi-stage build to create a lean production image.
+FROM alpine:3
+RUN apk add --no-cache ca-certificates
+
+# Copy the binary to the production image from the builder stage.
+COPY --from=builder /app/main /app/main
+
+# Make the binary executable
+RUN chmod +x /app/main
+
+# Service must listen to $PORT environment variable.
+# This default value facilitates local development.
+ENV PORT 8080
+
+# Run the web service on container startup.
 CMD ["/app/main"]
