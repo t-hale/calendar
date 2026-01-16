@@ -14,6 +14,14 @@ steps:
       - 'push'
       - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/calendar'
 
+  # Step 3: Initialize Terraform
+  - id: 'Terraform init'
+    name: 'hashicorp/terraform:latest'
+    dir: 'terraform'
+    args: ['init']
+    env:
+      - 'TF_VAR_project_id=$PROJECT_ID'
+
   # Step 3: Run Terraform to deploy the infrastructure
   - id: 'Deploy terraform'
     name: 'hashicorp/terraform:latest'
