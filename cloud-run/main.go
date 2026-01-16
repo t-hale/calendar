@@ -3,14 +3,10 @@ package cloud_run
 import (
 	"context"
 	"fmt"
-	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
+	"github.com/thale/family-cal/lib"
+	"google.golang.org/api/calendar/v3"
 	"log"
 	"net/http"
-	"os"
-
-	"github.com/thale/family-cal/lib"
-	"github.com/urfave/cli/v3"
-	"google.golang.org/api/calendar/v3"
 )
 
 var (
@@ -18,55 +14,71 @@ var (
 )
 
 func init() {
-	functions.HTTP("calendar", entrypoint)
+	//functions.HTTP("calendar", entrypoint)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/create":
+			createCalendar(w, r)
+		case "/delete":
+			deleteCalendar(w, r)
+		case "/list":
+			listCalendars(w, r)
+		case "/sync":
+			syncCalendar(w, r)
+		default:
+			// Default action or 404
+			http.Error(w, fmt.Sprintf("URL %s unsupported", r.URL.Path), http.StatusNotFound)
+		}
+	})
+
 }
 
-func entrypoint(w http.ResponseWriter, r *http.Request) {
-	cmd := &cli.Command{
-		Commands: []*cli.Command{
-			{
-				Name:    "create",
-				Aliases: []string{"a"},
-				Usage:   "create a shared calendar",
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					createCalendar(w, r)
-					return nil
-				},
-			},
-			{
-				Name:    "delete",
-				Aliases: []string{"c"},
-				Usage:   "delete a shared calendar",
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					deleteCalendar(w, r)
-					return nil
-				},
-			},
-			{
-				Name:    "list",
-				Aliases: []string{"a"},
-				Usage:   "list all shared calendars",
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					listCalendars(w, r)
-					return nil
-				},
-			},
-			{
-				Name:    "sync",
-				Aliases: []string{"c"},
-				Usage:   "sync a shared calendar",
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					syncCalendar(w, r)
-					return nil
-				},
-			},
-		},
-	}
-
-	if err := cmd.Run(context.Background(), os.Args); err != nil {
-		log.Fatal(err)
-	}
-}
+//func entrypoint(w http.ResponseWriter, r *http.Request) {
+//	cmd := &cli.Command{
+//		Commands: []*cli.Command{
+//			{
+//				Name:    "create",
+//				Aliases: []string{"a"},
+//				Usage:   "create a shared calendar",
+//				Action: func(ctx context.Context, cmd *cli.Command) error {
+//					createCalendar(w, r)
+//					return nil
+//				},
+//			},
+//			{
+//				Name:    "delete",
+//				Aliases: []string{"c"},
+//				Usage:   "delete a shared calendar",
+//				Action: func(ctx context.Context, cmd *cli.Command) error {
+//					deleteCalendar(w, r)
+//					return nil
+//				},
+//			},
+//			{
+//				Name:    "list",
+//				Aliases: []string{"a"},
+//				Usage:   "list all shared calendars",
+//				Action: func(ctx context.Context, cmd *cli.Command) error {
+//					listCalendars(w, r)
+//					return nil
+//				},
+//			},
+//			{
+//				Name:    "sync",
+//				Aliases: []string{"c"},
+//				Usage:   "sync a shared calendar",
+//				Action: func(ctx context.Context, cmd *cli.Command) error {
+//					syncCalendar(w, r)
+//					return nil
+//				},
+//			},
+//		},
+//	}
+//
+//	if err := cmd.Run(context.Background(), os.Args); err != nil {
+//		log.Fatal(err)
+//	}
+//}
 
 func createCalendar(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()

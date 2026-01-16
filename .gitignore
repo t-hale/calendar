@@ -1,2 +1,5 @@
 calendars.txt
 journeys.txt
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
