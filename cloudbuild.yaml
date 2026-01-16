@@ -1,13 +1,26 @@
 steps:
-  - name: gcr.io/cloud-builders/docker
+  # Step 1: Build the Docker image
+  - id: 'Build docker image'
+    name: 'gcr.io/cloud-builders/docker'
     args:
-      - build
+      - 'build'
       - '-t'
-      - us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar
+      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar'
       - .
-  - name: gcr.io/cloud-builders/docker
+  # Step 2: Push the Docker image to Artifact Registry
+  - id: 'Push docker image'
+    name: 'gcr.io/cloud-builders/docker'
     args:
-      - push
-      - us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar
+      - 'push'
+      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/create-calendar'
+
+  # Step 3: Run Terraform to deploy the infrastructure
+  - id: 'Deploy terraform'
+    name: 'hashicorp/terraform:latest'
+    dir: 'terraform'
+    args: ['apply', '-auto-approve']
+    env:
+      - 'TF_VAR_project_id=$PROJECT_ID'
+
 options:
   logging: CLOUD_LOGGING_ONLY
