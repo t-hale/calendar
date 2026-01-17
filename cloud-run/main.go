@@ -3,7 +3,7 @@ package cloud_run
 import (
 	"context"
 	"fmt"
-	"github.com/thale/family-cal/lib"
+	"github.com/t-hale/family-cal/lib"
 	"google.golang.org/api/calendar/v3"
 	"log"
 	"net/http"

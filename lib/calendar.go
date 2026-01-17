@@ -1,25 +1,19 @@
 package lib
 
 import (
-	"bufio"
-	"context"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/apognu/gocal"
-	//"github.com/rickar/cal/v2"
 	"google.golang.org/api/calendar/v3"
 )
 
-var (
-	calendarFile = flag.String("calendar-file", "", "Path to the file containing calendar URLs")
-	calendarName = flag.String("calendar-name", "", "Name of the target shared calendar")
-)
+type CalendarEntry struct {
+	Name string
+	Url  string
+}
 
 func cleanupTempCalendars(calendarService *calendar.Service) error {
 	allCalendars, err := GetCalendars(calendarService)
@@ -127,43 +121,23 @@ func listCalendarEvents(calendarService *calendar.Service, calendarId string) er
 	return nil
 }
 
-// importEventsToSharedCalendar imports a list of events into a specified shared calendar using the provided calendar service.
-// It requires a calendar service instance, the target calendar ID where events will be imported, and a slice of events.
+// ImportEventsToSharedCalendar imports a list of events into a specified shared calendar using the provided calendar service.
+// It requires a calendar service instance, the target calendar ID where events will be imported, and a list of CalendarEntry objects of events.
 // Returns an error if the import fails, or nil if all events are successfully imported.
-func importEventsToSharedCalendar(calendarService *calendar.Service, calendarId string) error {
-	file, err := os.Open(*calendarFile)
-	if err != nil {
-		return fmt.Errorf("error opening file: %v", err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	firstLine := true
-	for scanner.Scan() {
-		line := scanner.Text()
-		if firstLine {
-			firstLine = false
-			continue
-		}
-		if line == "" {
-			continue
-		}
-
-		items := strings.Split(line, ",")
-		cal, url := items[0], items[1]
-
+func ImportEventsToSharedCalendar(calendarService *calendar.Service, calendarId string, calendarEntries []*CalendarEntry) error {
+	for _, ce := range calendarEntries {
 		// logic to import the calendar URL into the named calendar would go here
-		log.Printf("Importing calendar %s: %s\n", cal, url)
+		log.Printf("Importing calendar %s: %s\n", ce.Name, ce.Url)
 
 		now := time.Now()
 		nextYear := now.AddDate(1, 0, 0)
-		events, err := getICSCalendarEvents(url, now, nextYear)
+		events, err := getICSCalendarEvents(ce.Url, now, nextYear)
 		if err != nil {
 			return fmt.Errorf("error retrieving events from ICS calendar: %v", err)
 		}
 
 		if len(events) == 0 {
-			log.Printf("No events found in calendar %s\n", url)
+			log.Printf("No events found in calendar %s\n", ce.Url)
 			continue
 		}
 
@@ -179,40 +153,7 @@ func importEventsToSharedCalendar(calendarService *calendar.Service, calendarId 
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		return fmt.Errorf("error reading file: %v", err)
-	}
-
 	return nil
-}
-
-func main() {
-
-	flag.Parse()
-
-	if *calendarFile == "" || *calendarName == "" {
-		flag.Usage()
-		log.Fatalf("Both --calendar-file and --calendar-name flags are required.")
-	}
-
-	log.Printf("Reading calendar URLs from file: %s\n", *calendarFile)
-	log.Printf("Target calendar: %s\n", *calendarName)
-
-	ctx := context.Background()
-	calendarService, err := calendar.NewService(ctx)
-	if err != nil {
-		log.Fatalf("Unable to retrieve Calendar client: %v", err)
-	}
-
-	sharedCalendarId, err := CreateSharedCalendar(calendarService, "RVA Hale Sports")
-	if err != nil {
-		log.Fatalf("Error creating shared calendar: %v", err)
-	}
-
-	err = SyncSharedCalendar(calendarService, sharedCalendarId)
-	if err != nil {
-		log.Fatalf("Error syncing shared calendar: %v", err)
-	}
 }
 
 func getICSCalendarEvents(url string, start, end time.Time) ([]*calendar.Event, error) {
@@ -253,14 +194,14 @@ func getICSCalendarEvents(url string, start, end time.Time) ([]*calendar.Event, 
 	return events, nil
 }
 
-func SyncSharedCalendar(calendarService *calendar.Service, calendarId string) error {
+func SyncSharedCalendar(calendarService *calendar.Service, calendarId string, calendarEntries []*CalendarEntry) error {
 	err := clearCalendar(calendarService, calendarId)
 	if err != nil {
 		return fmt.Errorf("error clearing shared calendar: %v", err)
 	}
 
 	log.Printf("Shared calendar ID: %s\n", calendarId)
-	err = importEventsToSharedCalendar(calendarService, calendarId)
+	err = ImportEventsToSharedCalendar(calendarService, calendarId, calendarEntries)
 	if err != nil {
 		return fmt.Errorf("error importing calendar events: %v", err)
 	}
