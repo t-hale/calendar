@@ -7,6 +7,7 @@ import (
 	"google.golang.org/api/calendar/v3"
 	"log"
 	"net/http"
+	"os"
 )
 
 var (
@@ -14,6 +15,7 @@ var (
 )
 
 func init() {
+	log.Println("starting calendar server")
 	//functions.HTTP("calendar", entrypoint)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
@@ -30,6 +32,19 @@ func init() {
 			http.Error(w, fmt.Sprintf("URL %s unsupported", r.URL.Path), http.StatusNotFound)
 		}
 	})
+
+	// Determine port for HTTP service from the environment variable
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default to 8080 if not set locally
+		log.Printf("defaulting to port %s", port)
+	}
+
+	// Start the HTTP server
+	log.Printf("listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
 
 }
 
