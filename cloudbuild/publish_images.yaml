@@ -4,6 +4,7 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
+      - '--platform linux/amd64'
       - '-t'
       - 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
       - .
