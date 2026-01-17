@@ -7,7 +7,7 @@ substitutions:
   _APP_IMAGE : "ubuntu"
   _SERVICE : "calendar"
   _DEPLOYMENT : "qa"
-  _GITHUB_REPO : "https://github.com/t-hale/family-cal"
+  _GITHUB_REPO : "https://github.com/t-hale/calendar"
   _SERVICE_ACCOUNT : "infrastructure@api-project-119360632367.iam.gserviceaccount.com"
 steps:
   - id: "Deploy cloud infrastructure"

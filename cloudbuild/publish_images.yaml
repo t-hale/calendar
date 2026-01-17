@@ -5,13 +5,13 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/calendar'
+      - 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
       - .
   # Step 2: Push the Docker image to Artifact Registry
   - id: 'Push docker image'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-east1-docker.pkg.dev/api-project-119360632367/family-cal/calendar'
+      - 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
 options:
   logging: CLOUD_LOGGING_ONLY

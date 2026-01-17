@@ -1,4 +1,4 @@
-module github.com/t-hale/family-cal
+module github.com/t-hale/calendar
 
 go 1.24.0
 

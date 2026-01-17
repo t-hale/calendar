@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/t-hale/family-cal/lib"
+	"github.com/t-hale/calendar/lib"
 	"google.golang.org/api/calendar/v3"
 )
 
