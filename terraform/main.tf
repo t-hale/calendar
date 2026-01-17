@@ -22,4 +22,4 @@ resource "google_cloud_run_v2_service" "default" {
       image = "us-east1-docker.pkg.dev/api-project-119360632367/calendar/main"
     }
   }
-}gi
+}
