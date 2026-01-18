@@ -45,7 +45,7 @@ steps:
         git config --global credential.helper store
         echo "https://${GIT_PAT}:@github.com" > ~/.git-credentials
         # Use the appropriate tag name or a substitution variable like $_TAG_NAME
-        git push authenticated_origin <tagname> # or git push authenticated_origin --tags to push all tags
+        git push authenticated_origin qa
     dir: /workspace
 
 options:
