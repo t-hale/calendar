@@ -46,6 +46,6 @@ steps:
         # Use the appropriate tag name or a substitution variable like $_TAG_NAME
         git push authenticated_origin qa
     dir: /workspace
-
+serviceAccount: "infrastructure@api-project-119360632367.iam.gserviceaccount.com"
 options:
   logging: CLOUD_LOGGING_ONLY
