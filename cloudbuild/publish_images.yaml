@@ -28,16 +28,19 @@ steps:
       - 'qa'
 
   # Step to retrieve the GitHub PAT from Secret Manager
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - id: 'Retrieve Github secret'
+    name: 'gcr.io/cloud-builders/gcloud'
     args: ['secrets', 'versions', 'access', 'latest', '--secret=GITHUB_PAT_SECRET', '--out-file=/workspace/github_pat.txt']
 
   # Step to configure git and push the tag
-  - name: 'gcr.io/cloud-builders/git'
+  - id: 'Add remote authenticated origin'
+    name: 'gcr.io/cloud-builders/git'
     args: ['remote', 'add', 'authenticated_origin', 'https://github.com']
     dir: '/workspace'
 
-  - name: 'gcr.io/cloud-builders/git'
-    entrypoint: bash
+  - id: 'Push the QA tag to Github'
+    name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
     args:
       - '-c'
       - |
