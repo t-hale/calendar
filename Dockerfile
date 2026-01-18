@@ -21,5 +21,9 @@ RUN chmod +x /app/main
 # This default value facilitates local development.
 ENV PORT 8080
 
+# Expose the port your application listens on (Cloud Run uses the PORT environment variable)
+EXPOSE 0.0.0.0:$PORT:$PORT
+
+
 # Run the web service on container startup.
 CMD ["/app/main"]

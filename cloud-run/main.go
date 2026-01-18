@@ -1,8 +1,9 @@
-package cloud_run
+package main
 
 import (
 	"context"
 	"fmt"
+	//"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/t-hale/calendar/lib"
 	"google.golang.org/api/calendar/v3"
 	"log"
@@ -10,28 +11,35 @@ import (
 	"os"
 )
 
+type handler struct{}
+
 var (
 	calendarService *calendar.Service
+	httpHandler     handler
 )
 
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "/create":
+		createCalendar(w, r)
+	case "/delete":
+		deleteCalendar(w, r)
+	case "/list":
+		listCalendars(w, r)
+	case "/sync":
+		syncCalendar(w, r)
+	default:
+		// Default action or 404
+		http.Error(w, fmt.Sprintf("URL %s unsupported", r.URL.Path), http.StatusNotFound)
+	}
+}
+
 func init() {
-	log.Println("starting calendar server")
-	//functions.HTTP("calendar", entrypoint)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case "/create":
-			createCalendar(w, r)
-		case "/delete":
-			deleteCalendar(w, r)
-		case "/list":
-			listCalendars(w, r)
-		case "/sync":
-			syncCalendar(w, r)
-		default:
-			// Default action or 404
-			http.Error(w, fmt.Sprintf("URL %s unsupported", r.URL.Path), http.StatusNotFound)
-		}
-	})
+	httpHandler = handler{}
+}
+
+func main() {
+	log.Printf("starting calendar server")
 
 	// Determine port for HTTP service from the environment variable
 	port := os.Getenv("PORT")
@@ -42,10 +50,9 @@ func init() {
 
 	// Start the HTTP server
 	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, httpHandler); err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 //func entrypoint(w http.ResponseWriter, r *http.Request) {

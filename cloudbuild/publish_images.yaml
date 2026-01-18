@@ -1,19 +1,36 @@
+
+substitutions:
+  DOCKER_IMAGE: 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
 steps:
   # Step 1: Build the Docker image
   - id: 'Build docker image'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
-      - '--platform'
-      - 'linux/amd64'
       - '-t'
-      - 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
+      - '${DOCKER_IMAGE}',
       - '.'
   # Step 2: Push the Docker image to Artifact Registry
   - id: 'Push docker image'
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
+      - '${DOCKER_IMAGE}',
+
+  - id: 'Update the qa tag'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'git'
+    args:
+      - 'tag'
+      - '-f'
+      - 'qa'
+
+  - id: 'Push the qa tag to remote'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'git'
+    args:
+      - 'push'
+      - 'origin'
+      - 'qa'
 options:
   logging: CLOUD_LOGGING_ONLY
