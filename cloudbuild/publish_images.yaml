@@ -27,14 +27,26 @@ steps:
       - '-f'
       - 'qa'
 
-  # Step 4: Push this tag to docker remote repository
-  - id: 'Push the qa tag to remote'
-    name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'git'
+  # Step to retrieve the GitHub PAT from Secret Manager
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['secrets', 'versions', 'access', 'latest', '--secret=GITHUB_PAT_SECRET', '--out-file=/workspace/github_pat.txt']
+
+  # Step to configure git and push the tag
+  - name: 'gcr.io/cloud-builders/git'
+    args: ['remote', 'add', 'authenticated_origin', 'https://github.com']
+    dir: '/workspace'
+
+  - name: 'gcr.io/cloud-builders/git'
+    entrypoint: bash
     args:
-      - 'push'
-      - 'origin'
-      - 'qa'
+      - '-c'
+      - |
+        GIT_PAT=$(cat /workspace/github_pat.txt)
+        git config --global credential.helper store
+        echo "https://${GIT_PAT}:@github.com" > ~/.git-credentials
+        # Use the appropriate tag name or a substitution variable like $_TAG_NAME
+        git push authenticated_origin <tagname> # or git push authenticated_origin --tags to push all tags
+    dir: /workspace
 
 options:
   logging: CLOUD_LOGGING_ONLY
