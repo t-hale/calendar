@@ -16,7 +16,7 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '${DOCKER_IMAGE}',
+      - '${DOCKER_IMAGE}'
 
   # Step 3: Add a qa tag to the latest commit hash
   - id: 'Update the qa tag'
@@ -35,5 +35,6 @@ steps:
       - 'push'
       - 'origin'
       - 'qa'
+
 options:
   logging: CLOUD_LOGGING_ONLY
