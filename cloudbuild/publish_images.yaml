@@ -1,6 +1,6 @@
 
 substitutions:
-  DOCKER_IMAGE: 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
+  _DOCKER_IMAGE: 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
 steps:
   # Step 1: Build the Docker image
   - id: 'Build docker image'
@@ -8,7 +8,7 @@ steps:
     args:
       - 'build'
       - '-t'
-      - '${DOCKER_IMAGE}'
+      - '${_DOCKER_IMAGE}'
       - '.'
 
   # Step 2: Push the Docker image to Artifact Registry
@@ -16,7 +16,7 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '${DOCKER_IMAGE}'
+      - '${_DOCKER_IMAGE}'
 
   # Step 3: Add a qa tag to the latest commit hash
   - id: 'Update the qa tag'
