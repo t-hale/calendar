@@ -1,6 +1,7 @@
 options:
   dynamic_substitutions: true
   logging: CLOUD_LOGGING_ONLY
+  pubsubTopic: 'push-image'
 substitutions:
   _PROJECT : "api-project-119360632367"
   _REGION : "us-east1"
