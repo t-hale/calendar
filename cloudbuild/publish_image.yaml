@@ -1,4 +1,6 @@
-
+options:
+  pubsubTopic: 'push-image'
+  logging: CLOUD_LOGGING_ONLY
 substitutions:
   _DOCKER_IMAGE: 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
 steps:
@@ -17,38 +19,3 @@ steps:
     args:
       - 'push'
       - '${_DOCKER_IMAGE}'
-
-  # Step 3: Add a qa tag to the latest commit hash
-  - id: 'Update the qa tag'
-    name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'git'
-    args:
-      - 'tag'
-      - '-f'
-      - 'qa'
-
-  # Step to retrieve the GitHub PAT from Secret Manager
-  - id: 'Retrieve Github secret'
-    name: 'gcr.io/cloud-builders/gcloud'
-    args: ['secrets', 'versions', 'access', 'latest', '--secret=GITHUB_PAT_SECRET', '--out-file=/workspace/github_pat.txt']
-
-  # Step to configure git and push the tag
-  - id: 'Add remote authenticated origin'
-    name: 'gcr.io/cloud-builders/git'
-    args: ['remote', 'add', 'authenticated_origin', 'https://github.com']
-    dir: '/workspace'
-
-  - id: 'Push the QA tag to Github'
-    name: 'gcr.io/cloud-builders/git'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        git config --global credential.helper store
-        echo "https://$(cat /workspace/github_pat.txt):@github.com" > ~/.git-credentials
-        # Use the appropriate tag name or a substitution variable like $_TAG_NAME
-        git push authenticated_origin qa
-    dir: /workspace
-serviceAccount: "infrastructure@api-project-119360632367.iam.gserviceaccount.com"
-options:
-  logging: CLOUD_LOGGING_ONLY
