@@ -18,14 +18,3 @@ steps:
     args:
       - 'push'
       - '${_DOCKER_IMAGE}'
-
-  # Step 3: Publish a message to the push-image GCP Pub/Sub topic
-  - id: 'Publish to Pub/Sub'
-    name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'pubsub'
-      - 'topics'
-      - 'publish'
-      - 'push-image'
-      - '--message'
-      - 'Image pushed: ${_DOCKER_IMAGE}'
