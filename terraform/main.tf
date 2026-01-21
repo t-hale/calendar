@@ -12,6 +12,7 @@ resource "google_cloud_run_v2_service" "default" {
   location = "us-east1"
   deletion_protection = false
   ingress = "INGRESS_TRAFFIC_ALL"
+  invoker_iam_disabled = true
 
   scaling {
     max_instance_count = 10
