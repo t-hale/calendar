@@ -22,3 +22,8 @@ resource "google_project_service" "infrastructure_manager" {
   service = "config.googleapis.com"
   disable_on_destroy = false
 }
+
+resource "google_project_service" "service_usage" {
+  service = "serviceusage.googleapis.com"
+  disable_on_destroy = false
+}
