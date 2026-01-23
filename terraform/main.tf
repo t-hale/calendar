@@ -8,10 +8,10 @@ provider "google" {
 }
 
 resource "google_cloud_run_v2_service" "default" {
-  name     = "calendar"
-  location = "us-east1"
-  deletion_protection = false
-  ingress = "INGRESS_TRAFFIC_ALL"
+  name                 = "calendar"
+  location             = "us-east1"
+  deletion_protection  = false
+  ingress              = "INGRESS_TRAFFIC_ALL"
   invoker_iam_disabled = true
 
   scaling {

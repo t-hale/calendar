@@ -4,12 +4,17 @@ resource "google_project_service" "artifact_registry" {
 }
 
 resource "google_project_service" "calendar" {
-  service = "calendar-json.googleapis.com"
+  service            = "calendar-json.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "cloud_build" {
   service            = "cloudbuild.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "cloud_resource_manager" {
+  service            = "cloudresourcemanager.googleapis.com"
   disable_on_destroy = false
 }
 
@@ -19,11 +24,11 @@ resource "google_project_service" "cloud_run" {
 }
 
 resource "google_project_service" "infrastructure_manager" {
-  service = "config.googleapis.com"
+  service            = "config.googleapis.com"
   disable_on_destroy = false
 }
 
 resource "google_project_service" "service_usage" {
-  service = "serviceusage.googleapis.com"
+  service            = "serviceusage.googleapis.com"
   disable_on_destroy = false
 }
