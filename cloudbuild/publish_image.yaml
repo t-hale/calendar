@@ -5,15 +5,13 @@ substitutions:
 steps:
   # Step 1: Compile Golang protobufs
   - id: 'Compile Golang protobufs'
-    steps:
-      - name: 'ubuntu'
-        entrypoint: 'bash'
-        args: [ './scripts/build_proto.sh' ]
+    name: 'ubuntu'
+    entrypoint: 'bash'
+    args: [ './scripts/build_proto.sh' ]
 
-  # Step 1: Build and push the Docker image
+  # Step 2: Build and push the Docker image
   - id: 'Build and push docker image'
-    steps:
-      - name: 'ubuntu'
-        entrypoint: 'bash'
-        args: [ './scripts/build_and_push_docker.sh' ]
+    name: 'ubuntu'
+    entrypoint: 'bash'
+    args: [ './scripts/build_and_push_docker.sh' ]
 
