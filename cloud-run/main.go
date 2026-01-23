@@ -2,13 +2,15 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	//"github.com/GoogleCloudPlatform/functions-framework-go/functions"
-	"github.com/t-hale/calendar/lib"
-	"google.golang.org/api/calendar/v3"
 	"log"
 	"net/http"
 	"os"
+
+	calendarpb "github.com/t-hale/calendar/gen"
+	"github.com/t-hale/calendar/lib"
+	"google.golang.org/api/calendar/v3"
 )
 
 type handler struct{}
@@ -18,16 +20,41 @@ var (
 	httpHandler     handler
 )
 
+// ParseJSON is a generic function to decode the request body into type T.
+func ParseJSON[T any](r *http.Request) (T, error) {
+	var v T
+	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+		return v, fmt.Errorf("decode json: %w", err)
+	}
+	return v, nil
+}
+
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/create":
-		createCalendar(w, r)
+		req, err := ParseJSON[calendarpb.CreateCalendarRequest](r)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+		}
+		createCalendar(w, &req)
 	case "/delete":
-		deleteCalendar(w, r)
+		req, err := ParseJSON[calendarpb.DeleteCalendarRequest](r)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+		}
+		deleteCalendar(w, &req)
 	case "/list":
-		listCalendars(w, r)
+		req, err := ParseJSON[calendarpb.ListCalendarRequest](r)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+		}
+		listCalendars(w, &req)
 	case "/sync":
-		syncCalendar(w, r)
+		req, err := ParseJSON[calendarpb.SyncCalendarRequest](r)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+		}
+		syncCalendar(w, &req)
 	default:
 		// Default action or 404
 		http.Error(w, fmt.Sprintf("URL %s unsupported", r.URL.Path), http.StatusNotFound)
@@ -55,54 +82,7 @@ func main() {
 	}
 }
 
-//func entrypoint(w http.ResponseWriter, r *http.Request) {
-//	cmd := &cli.Command{
-//		Commands: []*cli.Command{
-//			{
-//				Name:    "create",
-//				Aliases: []string{"a"},
-//				Usage:   "create a shared calendar",
-//				Action: func(ctx context.Context, cmd *cli.Command) error {
-//					createCalendar(w, r)
-//					return nil
-//				},
-//			},
-//			{
-//				Name:    "delete",
-//				Aliases: []string{"c"},
-//				Usage:   "delete a shared calendar",
-//				Action: func(ctx context.Context, cmd *cli.Command) error {
-//					deleteCalendar(w, r)
-//					return nil
-//				},
-//			},
-//			{
-//				Name:    "list",
-//				Aliases: []string{"a"},
-//				Usage:   "list all shared calendars",
-//				Action: func(ctx context.Context, cmd *cli.Command) error {
-//					listCalendars(w, r)
-//					return nil
-//				},
-//			},
-//			{
-//				Name:    "sync",
-//				Aliases: []string{"c"},
-//				Usage:   "sync a shared calendar",
-//				Action: func(ctx context.Context, cmd *cli.Command) error {
-//					syncCalendar(w, r)
-//					return nil
-//				},
-//			},
-//		},
-//	}
-//
-//	if err := cmd.Run(context.Background(), os.Args); err != nil {
-//		log.Fatal(err)
-//	}
-//}
-
-func createCalendar(w http.ResponseWriter, r *http.Request) {
+func createCalendar(w http.ResponseWriter, req *calendarpb.CreateCalendarRequest) {
 	ctx := context.Background()
 	var err error
 	calendarService, err = calendar.NewService(ctx)
@@ -110,7 +90,7 @@ func createCalendar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Unable to retrieve calendar client: %v", err), http.StatusInternalServerError)
 	}
 
-	calendarId, err := lib.CreateSharedCalendar(calendarService, "not-the-primary-calendar")
+	calendarId, err := lib.CreateSharedCalendar(calendarService, req.Name)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to create shared calendar: %v", err), http.StatusInternalServerError)
 		return
@@ -118,7 +98,7 @@ func createCalendar(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Created shared calendar: %s\n", calendarId)
 }
 
-func deleteCalendar(w http.ResponseWriter, r *http.Request) {
+func deleteCalendar(w http.ResponseWriter, req *calendarpb.DeleteCalendarRequest) {
 	ctx := context.Background()
 	var err error
 	calendarService, err = calendar.NewService(ctx)
@@ -126,7 +106,7 @@ func deleteCalendar(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Unable to retrieve calendar client: %v", err), http.StatusInternalServerError)
 	}
 
-	err = lib.DeleteCalendar(calendarService, "not-the-primary-calendar")
+	err = lib.DeleteCalendar(calendarService, req.CalendarId)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to delete shared calendar: %v", err), http.StatusInternalServerError)
 		return
@@ -134,7 +114,7 @@ func deleteCalendar(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Deleted shared calendar: %s\n", "not-the-primary-calendar")
 }
 
-func listCalendars(w http.ResponseWriter, r *http.Request) {
+func listCalendars(w http.ResponseWriter, req *calendarpb.ListCalendarRequest) {
 	ctx := context.Background()
 	var err error
 	calendarService, err = calendar.NewService(ctx)
@@ -150,7 +130,7 @@ func listCalendars(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func syncCalendar(w http.ResponseWriter, r *http.Request) {
+func syncCalendar(w http.ResponseWriter, req *calendarpb.SyncCalendarRequest) {
 	ctx := context.Background()
 	var err error
 	calendarService, err = calendar.NewService(ctx)

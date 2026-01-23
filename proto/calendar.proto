@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package calendar;
+
+// The go_package option defines the import path of the package for the generated Go code
+option go_package = "./calendarpb";
+
+message CreateCalendarRequest {
+  string name = 1;
+  repeated string urls = 2;
+}
+
+message DeleteCalendarRequest {
+  string calendarId = 1;
+}
+
+message ListCalendarRequest {}
+
+message SyncCalendarRequest {}
+
+
