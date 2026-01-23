@@ -3,18 +3,17 @@ options:
 substitutions:
   _DOCKER_IMAGE: 'us-east1-docker.pkg.dev/api-project-119360632367/calendar/main'
 steps:
-  # Step 1: Build the Docker image
-  - id: 'Build docker image'
-    name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-      - '${_DOCKER_IMAGE}'
-      - '.'
+  # Step 1: Compile Golang protobufs
+  - id: 'Compile Golang protobufs'
+    steps:
+      - name: 'ubuntu'
+        entrypoint: 'bash'
+        args: [ './scripts/build_proto.sh' ]
 
-  # Step 2: Push the Docker image to Artifact Registry
-  - id: 'Push docker image'
-    name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - '${_DOCKER_IMAGE}'
+  # Step 1: Build and push the Docker image
+  - id: 'Build and push docker image'
+    steps:
+      - name: 'ubuntu'
+        entrypoint: 'bash'
+        args: [ './scripts/build_and_push_docker.sh' ]
+
