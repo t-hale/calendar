@@ -11,7 +11,7 @@ steps:
 
   # Step 2: Build and push the Docker image
   - id: 'Build and push docker image'
-    name: 'ubuntu'
+    name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: [ './scripts/build_and_push_docker.sh' ]
 
