@@ -16,6 +16,8 @@ message DeleteCalendarRequest {
 
 message ListCalendarRequest {}
 
-message SyncCalendarRequest {}
+message SyncCalendarRequest {
+  string calendarId = 1;
+}
 
 

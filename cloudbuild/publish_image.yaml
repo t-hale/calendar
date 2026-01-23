@@ -14,4 +14,3 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: [ './scripts/build_and_push_docker.sh' ]
-

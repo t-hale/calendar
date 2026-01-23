@@ -95,7 +95,9 @@ func createCalendar(w http.ResponseWriter, req *calendarpb.CreateCalendarRequest
 		http.Error(w, fmt.Sprintf("Unable to create shared calendar: %v", err), http.StatusInternalServerError)
 		return
 	}
-	log.Printf("Created shared calendar: %s\n", calendarId)
+	message := fmt.Sprintf("Created shared calendar %s with id : %s", req.Name, calendarId)
+	log.Printf(message)
+	w.Write([]byte(message))
 }
 
 func deleteCalendar(w http.ResponseWriter, req *calendarpb.DeleteCalendarRequest) {
@@ -111,7 +113,9 @@ func deleteCalendar(w http.ResponseWriter, req *calendarpb.DeleteCalendarRequest
 		http.Error(w, fmt.Sprintf("Unable to delete shared calendar: %v", err), http.StatusInternalServerError)
 		return
 	}
-	log.Printf("Deleted shared calendar: %s\n", "not-the-primary-calendar")
+	message := fmt.Sprintf("Deleted shared calendar: %s\n", req.CalendarId)
+	log.Printf(message)
+	w.Write([]byte(message))
 }
 
 func listCalendars(w http.ResponseWriter, req *calendarpb.ListCalendarRequest) {
@@ -126,7 +130,9 @@ func listCalendars(w http.ResponseWriter, req *calendarpb.ListCalendarRequest) {
 		http.Error(w, fmt.Sprintf("Unable to retrieve calendars: %v", err), http.StatusInternalServerError)
 	}
 	for _, cal := range calendars {
-		log.Printf("Calendar: %+v\n", cal)
+		message := fmt.Sprintf("Calendar: %+v\n", cal)
+		log.Printf(message)
+		w.Write([]byte(message))
 	}
 }
 
@@ -137,4 +143,8 @@ func syncCalendar(w http.ResponseWriter, req *calendarpb.SyncCalendarRequest) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to retrieve calendar client: %v", err), http.StatusInternalServerError)
 	}
+
+	message := fmt.Sprintf("Successfully synced calendar %s", req.CalendarId)
+	log.Printf(message)
+	w.Write([]byte(message))
 }
