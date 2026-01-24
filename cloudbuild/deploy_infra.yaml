@@ -11,16 +11,8 @@ substitutions:
   _GITHUB_REPO : "https://github.com/t-hale/calendar"
   _SERVICE_ACCOUNT : "projects/$_PROJECT/serviceAccounts/infrastructure@$_PROJECT.iam.gserviceaccount.com"
 steps:
-  - id: "Get latest docker image tag"
-    name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: "bash"
-    args:
-      - '-c'
-      - 'gcloud container images describe $_DOCKER_IMAGE --format="value(image_summary.digest)" > image.txt'
-
   - id: "Deploy cloud infrastructure"
     name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: "bash"
-    args:
-      - '-c'
-      - 'gcloud infra-manager deployments apply $_DEPLOYMENT --service-account=$_SERVICE_ACCOUNT --git-source-repo=$_GITHUB_REPO --git-source-directory=terraform --git-source-ref=master --variables="image_tag=$(cat image.txt)'
+    args: [ './scripts/deploy_infra.sh' ]
+    automapSubstitutions: true
