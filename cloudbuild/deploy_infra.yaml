@@ -31,4 +31,3 @@ steps:
       - '--git-source-directory=terraform'
       - '--git-source-ref=master'
       - '--variables="image_tag=$(cat image.txt)'
-g
