@@ -1,7 +1,6 @@
 options:
-  dynamic_substitutions: true
+  dynamicSubstitutions: true
   logging: CLOUD_LOGGING_ONLY
-dynamicSubstitutions: true
 substitutions:
   _PROJECT : "api-project-119360632367"
   _REGION : "us-east1"
