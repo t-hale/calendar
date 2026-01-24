@@ -2,11 +2,11 @@ options:
   dynamic_substitutions: true
   logging: CLOUD_LOGGING_ONLY
 substitutions:
+  _PROJECT : "api-project-119360632367"
+  _REGION : "us-east1"
   _APP_IMAGE : "ubuntu"
   _DEPLOYMENT : "projects/$_PROJECT/locations/$_REGION/deployments/qa"
   _DOCKER_IMAGE : "us-east1-docker.pkg.dev/$_PROJECT/calendar/main"
-  _PROJECT : "api-project-119360632367"
-  _REGION : "us-east1"
   _SERVICE : "calendar"
   _GITHUB_REPO : "https://github.com/t-hale/calendar"
   _SERVICE_ACCOUNT : "projects/$_PROJECT/serviceAccounts/infrastructure@$_PROJECT.iam.gserviceaccount.com"
