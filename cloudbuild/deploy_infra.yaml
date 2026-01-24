@@ -3,13 +3,13 @@ options:
   logging: CLOUD_LOGGING_ONLY
 substitutions:
   _APP_IMAGE : "ubuntu"
-  _DEPLOYMENT : "qa"
-  _DOCKER_IMAGE : "us-east1-docker.pkg.dev/api-project-119360632367/calendar/main"
+  _DEPLOYMENT : "projects/$_PROJECT/locations/$_REGION/deployments/qa"
+  _DOCKER_IMAGE : "us-east1-docker.pkg.dev/$_PROJECT/calendar/main"
   _PROJECT : "api-project-119360632367"
   _REGION : "us-east1"
   _SERVICE : "calendar"
   _GITHUB_REPO : "https://github.com/t-hale/calendar"
-  _SERVICE_ACCOUNT : "infrastructure@api-project-119360632367.iam.gserviceaccount.com"
+  _SERVICE_ACCOUNT : "projects/$_PROJECT/serviceAccounts/infrastructure@$_PROJECT.iam.gserviceaccount.com"
 steps:
   - id: "Get latest docker image tag"
     name: 'gcr.io/cloud-builders/gcloud'
@@ -19,15 +19,8 @@ steps:
       - 'gcloud container images describe $_DOCKER_IMAGE --format="value(image_summary.digest)" > image.txt'
 
   - id: "Deploy cloud infrastructure"
-    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: "gcloud"
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: "bash"
     args:
-      - 'infra-manager'
-      - 'deployments'
-      - 'apply'
-      - 'projects/$_PROJECT/locations/$_REGION/deployments/$_DEPLOYMENT'
-      - '--service-account=projects/$_PROJECT/serviceAccounts/$_SERVICE_ACCOUNT'
-      - '--git-source-repo=$_GITHUB_REPO'
-      - '--git-source-directory=terraform'
-      - '--git-source-ref=master'
-      - '--variables="image_tag=$(cat image.txt)'
+      - '-c'
+      - 'gcloud infra-manager deployments apply $_DEPLOYMENT --service-account=$_SERVICE_ACCOUNT --git-source-repo=$_GITHUB_REPO --git-source-directory=terraform --git-source-ref=master --variables="image_tag=$(cat image.txt)'
