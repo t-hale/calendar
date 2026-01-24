@@ -16,7 +16,7 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - 'docker image inspect $_DOCKER_IMAGE --format="{{json (index .RepoDigests 0)}} > image.txt'
+      - 'docker image inspect $_DOCKER_IMAGE --format="{{json (index .RepoDigests 0)}}" > image.txt'
 
   - id: "Deploy cloud infrastructure"
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
