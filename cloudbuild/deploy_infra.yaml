@@ -16,7 +16,7 @@ steps:
     entrypoint: "bash"
     args:
       - '-c'
-      - 'gcloud container images describe $_DOCKER_IMAGE --format=value(image_summary.digest) > image.txt'
+      - 'gcloud container images describe $_DOCKER_IMAGE --format="value(image_summary.digest)" > image.txt'
 
   - id: "Deploy cloud infrastructure"
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
