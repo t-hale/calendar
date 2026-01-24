@@ -12,11 +12,16 @@ substitutions:
   _SERVICE_ACCOUNT : "infrastructure@api-project-119360632367.iam.gserviceaccount.com"
 steps:
   - id: "Get latest docker image tag"
-    name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: "gcloud"
     args:
-      - '-c'
-      - 'docker image inspect $_DOCKER_IMAGE --format="{{json (index .RepoDigests 0)}}" > image.txt'
+      - 'container'
+      - 'images'
+      - 'describe'
+      - '$_DOCKER_IMAGE'
+      - '--format=value(image_summary.digest)'
+      - '>'
+      - 'image.txt'
 
   - id: "Deploy cloud infrastructure"
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
