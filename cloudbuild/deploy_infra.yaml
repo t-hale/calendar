@@ -1,16 +1,23 @@
 options:
   dynamic_substitutions: true
   logging: CLOUD_LOGGING_ONLY
-  pubsubTopic: 'push-image'
 substitutions:
+  _APP_IMAGE : "ubuntu"
+  _DEPLOYMENT : "qa"
+  _DOCKER_IMAGE : "us-east1-docker.pkg.dev/api-project-119360632367/calendar/main"
   _PROJECT : "api-project-119360632367"
   _REGION : "us-east1"
-  _APP_IMAGE : "ubuntu"
   _SERVICE : "calendar"
-  _DEPLOYMENT : "qa"
   _GITHUB_REPO : "https://github.com/t-hale/calendar"
   _SERVICE_ACCOUNT : "infrastructure@api-project-119360632367.iam.gserviceaccount.com"
 steps:
+  - id: "Get latest docker image tag"
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'docker image inspect $_DOCKER_IMAGE --format="{{json (index .RepoDigests 0)}} > image.txt'
+
   - id: "Deploy cloud infrastructure"
     name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: "gcloud"
@@ -23,3 +30,5 @@ steps:
       - '--git-source-repo=$_GITHUB_REPO'
       - '--git-source-directory=terraform'
       - '--git-source-ref=master'
+      - '--variables="image_tag=$(cat image.txt)'
+g
