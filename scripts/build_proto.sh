@@ -7,4 +7,4 @@ docker run -v "$(pwd)":/calendar \
   --proto_path=calendar/proto \
   --go_out=calendar/gen \
   --go_opt=paths=source_relative \
-  'calendar/proto/*.proto'
+  'calendar/proto/*.proqto'

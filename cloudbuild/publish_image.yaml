@@ -5,7 +5,7 @@ substitutions:
 steps:
   # Step 1: Compile Golang protobufs
   - id: 'Compile Golang protobufs'
-    name: 'namely/protoc-all'
+    name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: [ './scripts/build_proto.sh' ]
 
