@@ -10,7 +10,7 @@ substitutions:
   _SERVICE : "calendar"
   _GITHUB_REPOSITORY : "https://github.com/t-hale/calendar"
   _GITHUB_SOURCE_DIRECTORY : 'terraform'
-  _GITHUB_SOURCE_REF : 'master'
+  _GITHUB_SOURCE_REF : 'qa'
   _SERVICE_ACCOUNT : "projects/${_PROJECT}/serviceAccounts/infrastructure@${_PROJECT}.iam.gserviceaccount.com"
 steps:
   - id: 'Build and push qa docker image'
