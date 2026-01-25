@@ -31,4 +31,4 @@ steps:
       - '--git-source-repo=${_GITHUB_REPOSITORY}'
       - '--git-source-directory=${_GITHUB_SOURCE_DIRECTORY}'
       - '--git-source-ref=${_GITHUB_SOURCE_REF}'
-      - '--input-values="image=${_DOCKER_IMAGE}"'
+      - '--input-values=image=${_DOCKER_IMAGE}'
