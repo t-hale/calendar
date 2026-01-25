@@ -1,13 +1,13 @@
 locals {
-  project = "api-project-119360632367"
-  region = "us-east1"
+  project    = "api-project-119360632367"
+  region     = "us-east1"
   repository = "calendar"
   image_name = "main"
-  tag = "qa"
+  tag        = "qa"
 }
 resource "google_cloud_run_v2_service" "default" {
   name                 = "calendar"
-  location             = "${local.region}"
+  location             = local.region
   deletion_protection  = false
   ingress              = "INGRESS_TRAFFIC_ALL"
   invoker_iam_disabled = true
@@ -24,7 +24,7 @@ resource "google_cloud_run_v2_service" "default" {
 }
 
 data "google_artifact_registry_docker_image" "my_image" {
-  location      = "${local.region}"
-  repository_id = "${local.repository}"
+  location      = local.region
+  repository_id = local.repository
   image_name    = "${local.image_name}:${local.tag}" # No tag or digest provided, will get the latest modified image
 }
