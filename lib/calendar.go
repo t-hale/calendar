@@ -85,6 +85,14 @@ func CreateSharedCalendar(calendarService *calendar.Service, calendarName string
 		log.Printf("Created shared calendar: %v\n", sc.Id)
 		sharedCalendar = sc.Id
 	}
+
+	calendarListEntry := &calendar.CalendarListEntry{Summary: calendarName, SummaryOverride: calendarName, AccessRole: "owner", Id: sharedCalendar}
+	cle, err := calendarService.CalendarList.Insert(calendarListEntry).Do()
+	if err != nil {
+		return "", fmt.Errorf("unable to add shared calendar to list of calendars: %v", err)
+	}
+
+	log.Printf("Updated shared calendar and added to calendar lists: %v\n", cle.Id)
 	return sharedCalendar, nil
 }
 
