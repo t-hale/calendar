@@ -10,14 +10,22 @@ message CreateCalendarRequest {
   repeated string urls = 2;
 }
 
+message CreateCalendarResponse {}
+
 message DeleteCalendarRequest {
   string calendarId = 1;
 }
 
+message DeleteCalendarResponse {}
+
 message ListCalendarRequest {}
+
+message ListCalendarResponse {}
 
 message SyncCalendarRequest {
   string calendarId = 1;
 }
+
+message SyncCalendarResponse {}
 
 

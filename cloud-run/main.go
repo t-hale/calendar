@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -20,6 +21,18 @@ var (
 	httpHandler     handler
 )
 
+const htmlTemplate = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>%s</title>
+</head>
+<body>
+    <h1>User Struct (Pretty Printed JSON)</h1>
+    <pre><code>%s</code></pre>
+</body>
+</html>`
+
 // ParseJSON is a generic function to decode the request body into type T.
 func ParseJSON[T any](r *http.Request) (T, error) {
 	var v T
@@ -27,6 +40,19 @@ func ParseJSON[T any](r *http.Request) (T, error) {
 		return v, fmt.Errorf("decode json: %w", err)
 	}
 	return v, nil
+}
+
+func prettyPrintHTML[T any](title string, data T, w http.ResponseWriter) {
+	// Marshal the struct to a pretty-printed JSON byte slice.
+	// The prefix "" and indent "\t" create the indentation.
+	jsonData, err := json.MarshalIndent(data, "", "\t")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Write the HTML response, embedding the JSON string safely.
+	fmt.Fprintf(w, htmlTemplate, title, template.HTMLEscapeString(string(jsonData)))
 }
 
 func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -134,11 +160,8 @@ func listCalendars(w http.ResponseWriter, req *calendarpb.ListCalendarRequest) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Unable to retrieve calendars: %v", err), http.StatusInternalServerError)
 	}
-	for _, cal := range calendars {
-		message := fmt.Sprintf("Calendar: %+v\n", cal)
-		log.Printf(message)
-		w.Write([]byte(message))
-	}
+	log.Printf("%+v", calendars)
+	prettyPrintHTML("ListCalendarResponse", calendars, w)
 }
 
 func syncCalendar(w http.ResponseWriter, req *calendarpb.SyncCalendarRequest) {
