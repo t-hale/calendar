@@ -18,13 +18,13 @@ resource "google_cloud_run_v2_service" "default" {
 
   template {
     containers {
-      image = data.google_artifact_registry_docker_image.my_image.self_link
+      image = var.image
     }
   }
 }
 
-data "google_artifact_registry_docker_image" "my_image" {
-  location      = local.region
-  repository_id = local.repository
-  image_name    = var.docker_image
-}
+# data "google_artifact_registry_docker_image" "my_image" {
+#   location      = local.region
+#   repository_id = local.repository
+#   image_name    = var.image
+# }

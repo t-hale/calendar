@@ -1,4 +1,4 @@
-variable "docker_image" {
+variable "image" {
   description = "The docker image string"
   type        = string
 }
