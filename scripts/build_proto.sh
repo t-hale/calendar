@@ -1,4 +1,10 @@
 #!/bin/bash
 
-mkdir -p gen
-protoc --proto_path=proto --go_out=gen --go_opt=paths=source_relative $(find proto -iname "*.proto")
+set -o errexit nounset pipefail
+
+docker run -v "$(pwd)":/calendar \
+  jaegertracing/protobuf \
+  --proto_path=calendar/proto \
+  --go_out=calendar/gen \
+  --go_opt=paths=source_relative \
+  'calendar/proto/*.proto'
