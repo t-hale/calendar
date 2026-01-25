@@ -1,6 +1,6 @@
 #!/bin/bash
 
-printenv
+set -o errexit nounset pipefail
 
 ./scripts/build_proto.sh
 
