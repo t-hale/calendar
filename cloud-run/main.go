@@ -35,24 +35,29 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		req, err := ParseJSON[calendarpb.CreateCalendarRequest](r)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+			return
 		}
 		createCalendar(w, &req)
 	case "/delete":
 		req, err := ParseJSON[calendarpb.DeleteCalendarRequest](r)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+			return
 		}
 		deleteCalendar(w, &req)
 	case "/list":
-		req, err := ParseJSON[calendarpb.ListCalendarRequest](r)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
-		}
+		//TODO - Add parsing back once the ListCalendarRequest body isn't nil
+		//req, err := ParseJSON[calendarpb.ListCalendarRequest](r)
+		//if err != nil {
+		//	http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+		//	return
+		//}
 		listCalendars(w, &req)
 	case "/sync":
 		req, err := ParseJSON[calendarpb.SyncCalendarRequest](r)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Unable to parse request body: %v", err), http.StatusBadRequest)
+			return
 		}
 		syncCalendar(w, &req)
 	default:
