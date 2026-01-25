@@ -2,6 +2,7 @@
 
 set -o errexit nounset pipefail
 
+mkdir -p gen
 docker run -v "$(pwd)":/calendar \
   jaegertracing/protobuf \
   --proto_path=calendar/proto \
