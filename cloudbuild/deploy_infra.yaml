@@ -6,26 +6,29 @@ substitutions:
   _REGION : "us-east1"
   _APP_IMAGE : "ubuntu"
   _DEPLOYMENT : "projects/${_PROJECT}/locations/${_REGION}/deployments/qa"
-  _DOCKER_IMAGE : "us-east1-docker.pkg.dev/${_PROJECT}/calendar/main"
+  _DOCKER_IMAGE : "us-east1-docker.pkg.dev/${_PROJECT}/calendar/main:qa"
   _SERVICE : "calendar"
   _GITHUB_REPOSITORY : "https://github.com/t-hale/calendar"
   _GITHUB_SOURCE_DIRECTORY : 'terraform'
   _GITHUB_SOURCE_REF : 'master'
   _SERVICE_ACCOUNT : "projects/${_PROJECT}/serviceAccounts/infrastructure@${_PROJECT}.iam.gserviceaccount.com"
 steps:
+  - id: 'Build and push qa docker image'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [ './scripts/build_and_push_docker.sh' ]
+    env:
+      - '_DOCKER_IMAGE=${_DOCKER_IMAGE}'
+
   - id: "Deploy cloud infrastructure"
     name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: "bash"
     args:
-      - './scripts/deploy_infra.sh'
-      - '--deployment'
+      - 'infra-manager'
+      - 'deployments'
+      - 'apply'
       - '$_DEPLOYMENT'
-      - '--service_account'
-      - '$_SERVICE_ACCOUNT'
-      - '--github_repo'
-      - '$_GITHUB_REPOSITORY'
-      - '--git_source_directory'
-      - '$_GITHUB_SOURCE_DIRECTORY'
-      - '--git_source_ref'
-      - '$_GITHUB_SOURCE_REF'
-
+      - '--service-account=$_SERVICE_ACCOUNT'
+      - '--git-source-repo=$_GITHUB_REPOSITORY'
+      - '--git-source-directory=$_GITHUB_SOURCE_DIRECTORY'
+      - '--git-source-ref=$_GITHUB_SOURCE_REF'
+      - '--variables="docker_image=$_DOCKER_IMAGE"'

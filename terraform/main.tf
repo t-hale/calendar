@@ -26,5 +26,5 @@ resource "google_cloud_run_v2_service" "default" {
 data "google_artifact_registry_docker_image" "my_image" {
   location      = local.region
   repository_id = local.repository
-  image_name    = "${local.image_name}:${local.tag}" # No tag or digest provided, will get the latest modified image
+  image_name    = var.docker_image
 }
