@@ -24,11 +24,8 @@ var (
 const htmlTemplate = `
 <!DOCTYPE html>
 <html>
-<head>
-    <title>%s</title>
-</head>
 <body>
-    <h1>User Struct (Pretty Printed JSON)</h1>
+    <h1>%s</h1>
     <pre><code>%s</code></pre>
 </body>
 </html>`
