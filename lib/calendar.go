@@ -91,6 +91,7 @@ func CreateSharedCalendar(calendarService *calendar.Service, calendarName string
 		Summary: calendarName,
 		Id:      sharedCalendar,
 	}
+	log.Printf("Adding shared calendar to calendar list: %+v\n", calendarListEntry)
 	cle, err := calendarService.CalendarList.Insert(&calendarListEntry).Do()
 	if err != nil {
 		if gErr, ok := err.(*googleapi.Error); ok {
