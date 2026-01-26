@@ -92,7 +92,7 @@ func CreateSharedCalendar(calendarService *calendar.Service, calendarName string
 	}
 	cle, err := calendarService.CalendarList.Insert(&calendarListEntry).Do()
 	if err != nil {
-		return "", fmt.Errorf("unable to add shared calendar to list of calendars: %v", err)
+		return "", fmt.Errorf("unable to add shared calendar to list of calendars: %+v %+v", cle.ServerResponse.Header, err)
 	}
 
 	log.Printf("Updated shared calendar and added to calendar lists: %v\n", cle.Id)
