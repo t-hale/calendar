@@ -2,6 +2,7 @@ package lib
 
 import (
 	"fmt"
+	"google.golang.org/api/googleapi"
 	"log"
 	"net/http"
 	"time"
@@ -92,7 +93,12 @@ func CreateSharedCalendar(calendarService *calendar.Service, calendarName string
 	}
 	cle, err := calendarService.CalendarList.Insert(&calendarListEntry).Do()
 	if err != nil {
-		return "", fmt.Errorf("unable to add shared calendar to list of calendars: %+v %+v", cle.ServerResponse.Header, err)
+		if gErr, ok := err.(*googleapi.Error); ok {
+			log.Printf("API Error: %d - %s\n", gErr.Code, gErr.Message)
+			log.Printf("API Error Details: %s\n", gErr.Body)
+			// Log gErr.Body for full JSON error details
+		}
+		return "", fmt.Errorf("unable to add shared calendar to list of calendars: %v", err)
 	}
 
 	log.Printf("Updated shared calendar and added to calendar lists: %v\n", cle.Id)
